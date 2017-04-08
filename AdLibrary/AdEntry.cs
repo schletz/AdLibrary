@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,7 +8,7 @@ using System.Xml.Linq;
 namespace AdLibrary
 {
     /// <summary>
-    /// Repräsentiert ein Objekt im Active Directory. Es ist ein Dircionary, welches einen Eintrag
+    /// Repräsentiert ein Objekt im Active Directory. Es ist ein Dictionary, welches einen Eintrag
     /// für jedes Property hat. Da Properties auch mehrere Werte haben können (z. B. membership),
     /// sind die Daten in einer Liste vom Typ AdPropertyValues gespeichert.
     /// </summary>
