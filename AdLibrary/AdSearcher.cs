@@ -27,13 +27,11 @@ namespace AdLibrary
         {
             get
             {
-                if (_directory == null) { throw new AdException("Nicht authentifiziert."); }
-                return _directory;
+                return _directory ?? throw new AdException("Nicht authentifiziert.");
             }
             set
             {
-                if (value == null) throw new AdException("Interner Fehler");
-                _directory = value;
+                _directory = value ?? throw new AdException("Interner Fehler");
             }
         }
         private DirectorySearcher _searcher;
@@ -41,19 +39,17 @@ namespace AdLibrary
         {
             get
             {
-                if (_searcher == null) { throw new AdException("Nicht authentifiziert."); }
-                return _searcher;
+                return _searcher ?? throw new AdException("Nicht authentifiziert.");
             }
             set
             {
-                if (value == null) throw new AdException("Interner Fehler");
-                _searcher = value;
+                _searcher = value ?? throw new AdException("Interner Fehler");
             }
         }
 
         /// <summary>
         /// Repräsentiert den User, mit dem AD Abfragen durchgeführt werden. Wird durch
-        /// Authenticate() gesetzt.
+        /// <see cref="Authenticate"/> gesetzt.
         /// </summary>
         public AdEntry CurrentUser { get; private set; }
 
@@ -90,15 +86,25 @@ namespace AdLibrary
             _directory?.Dispose();
         }
 
+        /// <summary>
+        /// Sucht alle Objekte im AD unter OU=SPG,DC=htl-wien5,DC=schule, die einen bestimmten Property Wert haben. Dabei wird ein
+        /// LDAP Suchfilter (propertyName=value) konstruiert und abgeschickt.
+        /// </summary>
+        /// <param name="propertyName">Der Name des LDAP Properties (z. B. cn)</param>
+        /// <param name="value">Der zu suchende Wert. Wildcards funktionieren nicht.</param>
+        /// <returns>Die gefundenen AD Objekte. Wird nichts gefunden, wird ein leeres Array geliefert.</returns>
         public AdEntry[] Find(string propertyName, string value)
         {
             return Find(propertyName, value, DefaultPath);
         }
 
         /// <summary>
-        /// Sucht alle Objekte im AD, die einen bestimmten Propertywert haben. Dabei wird ein
+        /// Sucht alle Objekte im AD, die einen bestimmten Property Wert haben. Dabei wird ein
         /// LDAP Suchfilter (propertyName=value) konstruiert und abgeschickt.
         /// </summary>
+        /// <exception cref="AdException">Wird ausgelöst, wenn der Server nicht erreichbar, die
+        /// Suchabfrage nicht durchführbar oder
+        /// ein Eintrag kein Property distinguishedName enthält. </exception>
         /// <param name="propertyName">Der Name des LDAP Properties (z. B. cn)</param>
         /// <param name="value">Der zu suchende Wert. Wildcards funktionieren nicht.</param>
         /// <param name="path">Der Suchfad, von dem die Suche aus beginnt (z. B. OU=SPG,DC=htl-wien5,DC=schule)</param>
@@ -194,6 +200,4 @@ namespace AdLibrary
             return FindGroupMembers(group);
         }
     }
-
-
 }
