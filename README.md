@@ -32,8 +32,8 @@ using (AdSearcher searcher = new AdSearcher())
             Console.ReadKey();
 
             /* Beispiel 4: Welche Schüler sind in der 5CHIF? */
-            List<AdEntry> puils = searcher.FindGroupMembers("5chif");
-            puils.OrderBy(m => m.Displayname).ToList().ForEach(m =>
+            List<AdEntry> pupils = searcher.FindGroupMembers("5chif");
+            pupils.OrderBy(m => m.Displayname).ToList().ForEach(m =>
             {
                 Console.WriteLine("{0}: {1} {2}, {3}, Lehrer: {4}", m.Displayname, m.Lastname, m.Firstname, m.Email, m.IsTeacher);
             });
