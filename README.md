@@ -1,6 +1,8 @@
 # AdLibrary
 C# Bibliothek für den Zugriff auf das Active Directory (LDAP). Der Zugriff ist nur aus dem Schulnetzwerk oder über eine VPN Verbindung
-möglich, da direkt auf htl-wien5.schule zugegriffen wird.
+möglich, da direkt auf htl-wien5.schule (private IP Adresse) zugegriffen wird.
+
+Der Zugriff erfolgt über die Ports 389 TCP und UDP.
 
 Beim Starten des Visual Studio Projektes muss das Projekt AdLibrary.App als Start up Project definiert werden, da sonst die DLL starten würde.
 
@@ -16,36 +18,52 @@ using (AdSearcher searcher = new AdSearcher())
         if (searcher.Authenticate(username, password))
         {
             /* Beispiel 1: Wer bin ich? Alle Properties des aktuellen Users
-                * in die Konsole schreiben. */
+             * in die Konsole schreiben. */
+            Console.Clear();
             Console.WriteLine(searcher.CurrentUser);
             Console.ReadKey();
 
             /* Beispiel 2: Welches Homeverzeichnis habe ich? Das steht im Property
-                * homedirectory. Da das Property nur 1x gesetzt ist, kann mit Value
-                * ein einzelner Wert angerufen werden. Ohne Value sind Properties immer
-                * eine Collection von Werten! */
+             * homedirectory. Da das Property nur 1x gesetzt ist, kann mit Value
+             * ein einzelner Wert angerufen werden. Ohne Value sind Properties immer
+             * eine Collection von Werten! */
+            Console.Clear();
             Console.WriteLine(searcher.CurrentUser["homedirectory"].Value);
             Console.ReadKey();
 
             /* Beispiel 3: Wer hat den Usernamen ABC1234? */
+            Console.Clear();
             Console.WriteLine(searcher.FindCn("ABC1234")?.Displayname);
             Console.ReadKey();
 
             /* Beispiel 4: Welche Schüler sind in der 5CHIF? */
-            List<AdEntry> pupils = searcher.FindGroupMembers("5chif");
-            pupils.OrderBy(m => m.Displayname).ToList().ForEach(m =>
+            Console.Clear();
+            List<AdEntry> puils = searcher.FindGroupMembers("5chif");
+            puils.OrderBy(p => p.Displayname).ToList().ForEach(p =>
             {
-                Console.WriteLine("{0}: {1} {2}, {3}, Lehrer: {4}", m.Displayname, m.Lastname, m.Firstname, m.Email, m.IsTeacher);
+                Console.WriteLine("{0}: {1} {2}, {3}, Lehrer: {4}", p.Displayname, p.Lastname, p.Firstname, p.Email, p.IsTeacher);
             });
             Console.ReadKey();
 
             /* Beispiel 5: Welche Lehrer unterrichten die 5CHIF? Dafür sehen wir uns
-                * die Gruppe Lehrende_5CHIF an. */
+             * die Gruppe Lehrende_5CHIF an. */
+            Console.Clear();
             List<AdEntry> teachers = searcher.FindGroupMembers("Lehrende_5CHIF");
-            teachers.OrderBy(m => m.Displayname).ToList().ForEach(m =>
+            teachers.OrderBy(t => t.Displayname).ToList().ForEach(t =>
             {
-                Console.WriteLine("{0}: {1} {2}, {3}, Lehrer: {4}", m.Displayname, m.Lastname, m.Firstname, m.Email, m.IsTeacher);
+                Console.WriteLine("{0}: {1} {2}, {3}, Lehrer: {4}", t.Displayname, t.Lastname, t.Firstname, t.Email, t.IsTeacher);
             });
+            Console.ReadKey();
+
+            /* Beispiel 6: Suche alle Personenobjekte in 
+             * OU=Lehrer,OU=Automatisch gewartete Benutzer,OU=Benutzer,OU=SPG,DC=htl-wien5,DC=schule */
+            Console.Clear();
+            AdEntry[] allTeachers = searcher.Find("objectclass", "person", "OU=Lehrer,OU=Automatisch gewartete Benutzer,OU=Benutzer,OU=SPG,DC=htl-wien5,DC=schule");
+            allTeachers.OrderBy(at=>at.Displayname).ToList().ForEach(at=>
+            {
+                Console.WriteLine("{0}: {1} {2}, {3}, Lehrer: {4}", at.Displayname, at.Lastname, at.Firstname, at.Email, at.IsTeacher);
+            });                        
+
         }
         else
         {
