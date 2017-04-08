@@ -1,5 +1,9 @@
 # AdLibrary
-C# Bibliothek für den Zugriff auf das Active Directory (LDAP)
+C# Bibliothek für den Zugriff auf das Active Directory (LDAP). Der Zugriff ist nur aus dem Schulnetzwerk oder über eine VPN Verbindung
+möglich, da direkt auf htl-wien5.schule zugegriffen wird.
+
+Beim Starten des Visual Studio Projektes muss das Projekt AdLibrary.App als Start up Project definiert werden, da sonst die DLL starten würde.
+
 ```C#
 string username, password;
 
