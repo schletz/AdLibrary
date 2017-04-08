@@ -1,4 +1,4 @@
-﻿/*
+/*
  * ADLIBRARY
  * Bibliothek für den Zugriff über die LDAP Schnittstelle des ActiveDirectories der HTL Wien V.
  * Autor: Michael Schletz, April 2017
@@ -11,9 +11,16 @@ using System.Linq;
 
 namespace AdLibrary
 {
+    /// <summary>
+    /// Durchsucht das AD der HTL Wien V. Dies ist nur im Schulnetzwerk oder über VPN mögoich,
+    /// da der Comaincontroller nur eine private IP Adresse hat.
+    /// Außerdem muss Port 389 TCP und UDP nach außen hin freigeschatgen sein.
+    /// </summary>
     public class AdSearcher : IDisposable
     {
-        public const string LdapServer = "LDAP://htl-wien5.schule/OU=SPG,DC=htl-wien5,DC=schule";
+        /* LDAP muss großgeschrieben sein, sonst gibt es einen "unbekannten Fehler". */
+        public const string LdapServer = "LDAP://htl-wien5.schule";
+        public const string DefaultPath = "OU=SPG,DC=htl-wien5,DC=schule";
 
         private DirectoryEntry _directory;
         private DirectoryEntry directory
@@ -61,7 +68,8 @@ namespace AdLibrary
         {
             /* Hier wird nur das AD konfiguriert. Es wird noch nichts über das Netzwerk gesendet.
              * Das wird erst bei der Find Methode gemacht. */
-            directory = new DirectoryEntry(LdapServer, username, password, AuthenticationTypes.Secure);
+            string path = LdapServer + "/" + DefaultPath;
+            directory = new DirectoryEntry(path, username, password, AuthenticationTypes.Secure);
             /* Der Searcher existiert auch nur 1x. Je nach gesetztem Filter liefert er uns die Daten.
              * Er stellt Quasi einen Stream ins AD dar. Ohne eine Einstellung der PageSize liefert
              * er allerdings eine Exception. */
@@ -82,19 +90,26 @@ namespace AdLibrary
             _directory?.Dispose();
         }
 
+        public AdEntry[] Find(string propertyName, string value)
+        {
+            return Find(propertyName, value, DefaultPath);
+        }
+
         /// <summary>
         /// Sucht alle Objekte im AD, die einen bestimmten Propertywert haben. Dabei wird ein
         /// LDAP Suchfilter (propertyName=value) konstruiert und abgeschickt.
         /// </summary>
         /// <param name="propertyName">Der Name des LDAP Properties (z. B. cn)</param>
         /// <param name="value">Der zu suchende Wert. Wildcards funktionieren nicht.</param>
-        /// <returns></returns>
-        public AdEntry[] Find(string propertyName, string value)
+        /// <param name="path">Der Suchfad, von dem die Suche aus beginnt (z. B. OU=SPG,DC=htl-wien5,DC=schule)</param>
+        /// <returns>Die gefundenen AD Objekte. Wird nichts gefunden, wird ein leeres Array geliefert.</returns>
+        public AdEntry[] Find(string propertyName, string value, string path)
         {
             try
             {
                 AdEntry[] results;
                 /* LDAP Suchfilter bauen. */
+                directory.Path = LdapServer + "/" + path;
                 searcher.Filter = "(" + propertyName + "=" + value + ")";
                 SearchResultCollection searchResults = searcher.FindAll();
                 results = new AdEntry[searchResults.Count];
