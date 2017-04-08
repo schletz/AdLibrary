@@ -27,7 +27,9 @@ namespace AdLibrary
         /* Nur bei Lehrern gesetzt. */
         public string PersNr { get { return getPropertyVal("extensionattribute4"); } }
 
-        /* Aufgrund des DN wird geprüft, ob der User unter der OU Lehrer angelegt wurde. */
+        /// <summary>
+        /// Aufgrund des DN wird geprüft, ob der User unter OU=Lehrer angelegt ist.
+        /// </summary>
         public bool IsTeacher
         {
             get
