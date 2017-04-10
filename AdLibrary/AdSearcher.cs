@@ -27,6 +27,10 @@ namespace AdLibrary
         {
             get
             {
+                /* Diese Anweisung benötigt VS 2017 und C#7. In VS 2015 muss noch mit
+                 * if (_directory == null) throw new AdException("Nicht authentifiziert.");
+                 * return _directory 
+                 * gearbeitet werden. */
                 return _directory ?? throw new AdException("Nicht authentifiziert.");
             }
             set
