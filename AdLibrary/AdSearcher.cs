@@ -13,7 +13,7 @@ namespace AdLibrary
 {
     /// <summary>
     /// Durchsucht das AD der HTL Wien V. Dies ist nur im Schulnetzwerk oder über VPN mögoich,
-    /// da der Comaincontroller nur eine private IP Adresse hat.
+    /// da der Domaincontroller nur eine private IP Adresse hat.
     /// Außerdem muss Port 389 TCP und UDP nach außen hin freigeschatgen sein.
     /// </summary>
     public class AdSearcher : IDisposable
