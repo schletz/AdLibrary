@@ -21,7 +21,7 @@ Für die Verwendung in anderen Programmen und in ASP.NET Core wird in Visual Stu
 erzeugt. Die DLL Datei liegt danach in *bin/Release/netcoreapp3.0*. Diese kann in andere Projekte
 kopiert und darauf als Dependency verwiesen werden.
 
-
+## Beispielprogramm: Abfrage des Active Directories
 ```C#
 string username, password;
 
@@ -54,7 +54,7 @@ using (AdSearcher searcher = new AdSearcher())
 
             /* Beispiel 4: Welche Schüler sind in der 5CHIF? */
             Console.Clear();
-            List<AdEntry> pupils = searcher.FindGroupMembers("5CHIF");
+            List<AdEntry> pupils = searcher.FindGroupMembers("5AHIF");
             pupils.OrderBy(p => p.Displayname).ToList().ForEach(p =>
             {
                 Console.WriteLine("{0}: {1} {2}, {3}, Lehrer: {4}", p.Displayname, p.Lastname, p.Firstname, p.Email, p.IsTeacher);
