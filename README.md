@@ -1,10 +1,26 @@
 # AdLibrary
-C# Bibliothek für den Zugriff auf das Active Directory (LDAP). Der Zugriff ist nur aus dem Schulnetzwerk oder über eine VPN Verbindung
-möglich, da direkt auf htl-wien5.schule (private IP Adresse) zugegriffen wird.
+C# Bibliothek für den Zugriff auf das Active Directory (LDAP). Der Zugriff ist nur aus dem 
+Schulnetzwerk oder über eine VPN Verbindung möglich, da direkt auf htl-wien5.schule 
+(private IP Adresse) zugegriffen wird.
 
 Der Zugriff erfolgt über die Ports 389 TCP und UDP.
 
-Beim Starten des Visual Studio Projektes muss das Projekt AdLibrary.App als Start up Project definiert werden, da sonst die DLL starten würde.
+Beim Starten des Visual Studio Projektes muss das Projekt *AdLibrary.Testapp* als Start up Project 
+definiert werden, da sonst die DLL starten würde.
+
+## Kompatibilität
+Das verwendete Paket *System.DirectoryServices* ist nicht sehr gut von Microsoft gepflegt, es wurde 
+lediglich aus dem .NET Framework mit alter Codebasis migriert. Dies zeigt sich dadurch, dass die 
+Methoden noch nicht asynchron sind.
+
+Diese Bibliothek benötigt mindestens .NET Core 3.0, läuft aber nur unter Windows, da von diesem Paket
+verwendete Abhängigkeiten nur für Windows zur Verfügung stehen.
+
+## Verwendung in ASP.NET Core
+Für die Verwendung in anderen Programmen und in ASP.NET Core wird in Visual Studio ein Releasebuild
+erzeugt. Die DLL Datei liegt danach in *bin/Release/netcoreapp3.0*. Diese kann in andere Projekte
+kopiert und darauf als Dependency verwiesen werden.
+
 
 ```C#
 string username, password;
