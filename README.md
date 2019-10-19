@@ -52,7 +52,7 @@ using (AdSearcher searcher = new AdSearcher())
             Console.WriteLine(searcher.FindCn("ABC1234")?.Displayname);
             Console.ReadKey();
 
-            /* Beispiel 4: Welche Schüler sind in der 5CHIF? */
+            /* Beispiel 4: Welche Schüler sind in der 5AHIF? */
             Console.Clear();
             List<AdEntry> pupils = searcher.FindGroupMembers("5AHIF");
             pupils.OrderBy(p => p.Displayname).ToList().ForEach(p =>
