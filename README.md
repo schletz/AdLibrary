@@ -1,12 +1,9 @@
 # AdLibrary
 
-C# Bibliothek für den Zugriff auf das Active Directory (LDAP). Der Zugriff ist nur aus dem
-Schulnetzwerk oder über eine VPN Verbindung möglich, da direkt auf *htl-wien5.schule*
-(private IP Adresse) zugegriffen wird.
+C# Bibliothek für den Zugriff auf das Active Directory (LDAP). Der Zugriff erfolgt auf
+*ldap.spengergasse.at* über den Port 636 (LDAPS Protokoll).
 
-Der Zugriff erfolgt über die Ports 389 TCP und UDP.
-
-Beim Starten des Visual Studio Projektes muss das Projekt *AdLibrary.Testapp* als Start up Project 
+Beim Starten des Visual Studio Projektes muss das Projekt *AdLibrary.Testapp* als Start up Project
 definiert werden, da sonst die DLL starten würde.
 
 ## Dependencies
