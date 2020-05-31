@@ -19,7 +19,8 @@ namespace AdLibrary.Api
     public sealed class AdSearcher : IDisposable
     {
         // LDAP muss großgeschrieben sein, sonst gibt es einen "unbekannten Fehler".
-        public string LdapServer => "LDAP://htl-wien5.schule";
+        //public string LdapServer => "LDAP://htl-wien5.schule";
+        public string LdapServer => "LDAP://ldap.spengergasse.at:636";
         public string DefaultPath => "OU=SPG,DC=htl-wien5,DC=schule";
         /// <summary>
         /// Die Anzahl der Datensätze, die vom LDAP Server bei einer Abfrage abgerufen werden.
