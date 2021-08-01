@@ -16,9 +16,9 @@ using System.Threading.Tasks;
 
 namespace AdLoginDemo
 {
-    class Program
+    internal class Program
     {
-        static async Task Main()
+        private static async Task Main()
         {
             Console.Write("Benutzername: ");
             var username = Console.ReadLine();
@@ -28,48 +28,50 @@ namespace AdLoginDemo
             var password = Console.ReadLine();
             Console.ForegroundColor = oldColor;
 
-            var myUser = AdService.Login(username, password).CurrentUser;
-            Console.WriteLine($"Angemeldet mit DN {myUser.Dn}");
+            if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password)) { return; }
+            Console.WriteLine("*************************************************************************************");
+            Console.WriteLine("AD LIBRARY TESTPROGRAMM (STRG+C für Abbruch)");
+            Console.WriteLine("*************************************************************************************");
+            using var service = AdService.Login(username, password);
+            var currentUser = service.CurrentUser;
 
-#if DEBUG
-            Console.WriteLine("Das Programm läuft im DEBUG Modus.");
-            Console.WriteLine($"Die Benutzerdaten wurden daher mit dem Suchuser {AdService.Searchuser.user} ohne Benutzerkennwort geladen.");
-#endif
-
-            if (myUser.Role == AdUserRole.Pupil)
+            Console.WriteLine($"Angemeldet mit DN {currentUser.Dn}");
+            if (currentUser.Role == AdUserRole.Pupil)
             {
-                var ownClass = myUser.Classes.FirstOrDefault() ?? "(N/A)";
+                var ownClass = currentUser.Classes.FirstOrDefault() ?? "(N/A)";
                 Console.WriteLine($"Deine Klasse ist: {ownClass}");
             }
-            else if (myUser.Role == AdUserRole.Teacher)
+            else if (currentUser.Role == AdUserRole.Teacher)
             {
-                var ownClass = string.Join(", ", myUser.Classes);
+                var ownClass = string.Join(", ", currentUser.Classes);
                 Console.WriteLine($"Du unterrichtest folgende Klassen: {ownClass}");
             }
 
             // Für die nachfolgenden Abfragen verwenden wir einen Suchuser (Login ohne Argumente),
             // da wir das Kennwort des Benutzers nicht speichern wollen.
             // Falls kein Suchuser vorhanden ist, kann natürlich der eigene Benutzer verwendet werden.
-            var adService = AdService.Login();
-            var classes = string.Join(", ", adService.GetClasses());
+            var classes = string.Join(", ", service.GetClasses());
             Console.WriteLine($"Gefundene Klassen: {classes}");
 
-            var kv = adService.GetKv("5AHIF");
+            var kv = service.GetKv("5AHIF");
             Console.WriteLine($"Der KV der 5AHIF ist {kv?.Firstname} {kv?.Lastname} ({kv?.Email})");
 
-            var pupils = adService.GetPupils("5AHIF")?.Select(p => $"{p.Lastname} {p.Firstname}") ?? new string[0];
+            var pupils = service.GetPupils("5AHIF")?.Select(p => $"{p.Lastname} {p.Firstname}") ?? new string[0];
             Console.WriteLine($"Folgende Schüler sind in der 5AHIF: {string.Join(", ", pupils)}");
 
-            var teachers = adService.GetTeachers("5AHIF")?.Select(p => $"{p.Lastname} {p.Firstname}") ?? new string[0];
+            var teachers = service.GetTeachers("5AHIF")?.Select(p => $"{p.Lastname} {p.Firstname}") ?? new string[0];
             Console.WriteLine($"Folgende Lehrer unterrichten die 5AHIF: {string.Join(", ", teachers)}");
 
             // *************************************************************************************
             // SENDEN EINER MAIL ÜBER DEN EXCHANGE SERVER DER SCHULE
             // *************************************************************************************
             var message = new MimeMessage();
-            using var client = new SpgMailClient(myUser.Cn, password);
+            using var client = new SpgMailClient(currentUser.Cn, password);
 
+            Console.WriteLine();
+            Console.WriteLine("*************************************************************************************");
             Console.WriteLine("SENDEN EINER EMAIL (STRG+C für Abbruch)");
+            Console.WriteLine("*************************************************************************************");
             Console.Write("Name des Empfängers:           ");
             var mailTo = Console.ReadLine();
             Console.Write("E-Mail Adresse des Empfängers: ");
@@ -79,10 +81,10 @@ namespace AdLoginDemo
 
             // Die FROM Adresse muss der Exchange User sein, mit dem wir angemeldet sind.
             // Senden von anderen Adressen aus ist nicht erlaubt.
-            message.From.Add(new MailboxAddress($"{myUser.Firstname} {myUser.Lastname}", client.SenderEmail));
+            message.From.Add(new MailboxAddress($"{currentUser.Firstname} {currentUser.Lastname}", client.SenderEmail));
             // Wenn der Empfänger auf Antworten klickt, soll die Nachricht an einen sinnvolleren Empfänger
             // gesendet werden (meist die Person, die die Benachrichtigung verursacht hat.
-            message.ReplyTo.Add(new MailboxAddress($"{myUser.Firstname} {myUser.Lastname}", client.SenderEmail));
+            message.ReplyTo.Add(new MailboxAddress($"{currentUser.Firstname} {currentUser.Lastname}", client.SenderEmail));
             // Der Empfänger
             message.To.Add(new MailboxAddress(mailTo, mailToAddress));
             // Betreff
@@ -94,7 +96,6 @@ namespace AdLoginDemo
             };
 
             await client.SendMailAsync(message);
-
         }
     }
 }
