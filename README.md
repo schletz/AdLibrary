@@ -6,10 +6,13 @@ Folgende NuGet Pakete werden verwendet:
   zum Abfragen von Daten aus dem Active Directory
 - [MailKit](https://www.nuget.org/packages/MailKit/) zum Senden von Mails über den Mailserver der Schule.
 
+## Klonen des Repositories
+`git clone https://github.com/schletz/AdLibrary.git`
+
 ## Konfigurieren des Abfrageusers
 
-Im sich im Development Mode auch als anderer User anmelden zu können, muss ein Abfrageuser in
-[appsettings.json](AdLoginDemo/AdLoginDemo.Webapp/appsettings.json) hinterlegt werden (Properties
+Um sich im Development Mode auch als anderer User anmelden zu können, muss ein Abfrageuser in
+[AdLoginDemo.Webapp/appsettings.json](AdLoginDemo/AdLoginDemo.Webapp/appsettings.json) hinterlegt werden (Properties
 *Searchuser* und *Searchpass*). Das kann auch der eigene User sein, allerdings darf die Konfiguration
 natürlich nie öffentlich geteilt werden.
 
@@ -17,7 +20,7 @@ natürlich nie öffentlich geteilt werden.
 Über die Konsole (oder die IDE) kann das Projekt in *AdLoginDemo.Webapp* gestartet werden.
 
 ```text
-cd AdLoginDemo.Webapp
+cd AdLoginDemo/AdLoginDemo.Webapp
 dotnet watch run
 ```
 
