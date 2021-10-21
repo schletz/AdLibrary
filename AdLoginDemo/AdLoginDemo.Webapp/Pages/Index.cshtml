@@ -1,0 +1,84 @@
+﻿@page
+@model IndexModel
+@section head
+{
+    <style>
+        .property {
+            font-weight: 500;
+        }
+    </style>
+}
+<h1 class="display-4">Welcome</h1>
+@if (Model.CurrentUser is not null)
+{
+    <h4>Angemeldet als User @Model.CurrentUser.Cn</h4>
+    <div class="d-block d-sm-table">
+        <div class="d-block d-sm-table-row">
+            <div class="d-block d-sm-table-cell property">
+                DN
+            </div>
+            <div class="d-block d-sm-table-cell">
+                @Model.CurrentUser.Dn
+            </div>
+        </div>
+
+        <div class="d-block d-sm-table-row">
+            <div class="d-block d-sm-table-cell property">
+                Role
+            </div>
+            <div class="d-block d-sm-table-cell">
+                @Model.CurrentUser.Role.ToString()
+            </div>
+        </div>
+
+        <div class="d-block d-sm-table-row">
+            <div class="d-block d-sm-table-cell property">
+                Name
+            </div>
+            <div class="d-block d-sm-table-cell">
+                @Model.CurrentUser.Firstname  @Model.CurrentUser.Lastname (@Model.CurrentUser.Email)
+            </div>
+        </div>
+
+        <div class="d-block d-sm-table-row">
+            <div class="d-block d-sm-table-cell property">
+                Schüler Nr.
+            </div>
+            <div class="d-block d-sm-table-cell">
+                @Model.CurrentUser.PupilId
+            </div>
+        </div>
+
+        <div class="d-block d-sm-table-row">
+            <div class="d-block d-sm-table-cell property">
+                Lehrerkürzel
+            </div>
+            <div class="d-block d-sm-table-cell">
+                @Model.CurrentUser.TeacherId
+            </div>
+        </div>
+
+        <div class="d-block d-sm-table-row">
+            <div class="d-block d-sm-table-cell property">
+                Klasse(n)
+            </div>
+            <div class="d-block d-sm-table-cell">
+                @string.Join(", ", Model.CurrentUser.Classes)
+            </div>
+        </div>
+
+        <div class="d-block d-sm-table-row">
+            <div class="d-block d-sm-table-cell property">
+                Group memberships
+            </div>
+            <div class="d-block d-sm-table-cell">
+                @string.Join(", ", Model.CurrentUser.GroupMemberhips)
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <p>Im Moment ist niemand angemeldet. Klicke auf <em>Login</em>, um dich mit dem Schulaccount anzumelden.</p>
+}
+

@@ -3,13 +3,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AdLoginDemo.Application.Extensions;
 
-namespace AdLoginDemo.Services
+namespace AdLoginDemo.Application.Infrastructure
 {
     public enum AdUserRole { Other = 0, Pupil, Teacher, Administration, Management }
 
     /// <summary>
-    /// Klasse für den AD Zugriff. Stellt die Loginfunktion und abfragemethoden bereit.
+    /// Klasse für den AD Zugriff. Stellt die Loginfunktion und Abfragemethoden bereit.
     /// </summary>
     public class AdService : IDisposable
     {
@@ -19,8 +20,6 @@ namespace AdLoginDemo.Services
         public static string Hostname { get; } = "ldap.spengergasse.at";
         public static string Domain { get; } = "htl-wien5.schule";
         public static string BaseDn { get; } = "OU=Benutzer,OU=SPG,DC=htl-wien5,DC=schule";
-        public static (string user, string pass) Searchuser { get; } = ("Hier einen Suchuser angeben.", "Das Passwort.");
-
         public AdUser CurrentUser { get; }
 
         /// <summary>
@@ -36,30 +35,28 @@ namespace AdLoginDemo.Services
             try
             {
                 try { connection.Connect(Hostname, 636); }
-                catch { throw new AdException($"Der Anmeldeserver ist nicht erreichbar."); }
+                catch { throw new ApplicationException($"Der Anmeldeserver ist nicht erreichbar."); }
                 try { connection.Bind($"{cn}@{Domain}", password); }
-                catch { throw new AdException($"Ungültiger Benutzername oder Passwort."); }
+                catch { throw new ApplicationException($"Ungültiger Benutzername oder Passwort."); }
 
                 return connection;
             }
             catch { connection.Disconnect(); throw; }
         }
 
-        public static AdService Login() => Login(Searchuser.user, Searchuser.pass);
-
         /// <summary>
         /// Führt ein Login am Active Directory durch.
         /// </summary>
-        public static AdService Login(string cn, string password)
+        public static AdService Login(string cn, string password, string? currentUserCn = null)
         {
             var connection = GetConnection(cn, password);
             var result = connection.Search(
                         BaseDn,
                         LdapConnection.ScopeSub,
-                        $"(&(objectClass=user)(objectClass=person)(cn={cn}))",
-                        new string[] { "cn", "givenName", "sn", "mail", "employeeid", "memberof" },
+                        $"(&(objectClass=user)(objectClass=person)(cn={currentUserCn ?? cn}))",
+                        new string[] { "cn", "givenName", "sn", "mail", "employeeid", "memberof", "description" },
                         false);
-            LdapEntry loginUser = result.FirstOrDefault() ?? throw new AdException("Der Benutzer wurde nicht gefunden.");
+            LdapEntry loginUser = result.FirstOrDefault() ?? throw new ApplicationException("Der Benutzer wurde nicht gefunden.");
             var user = new AdUser(loginUser);
             return new AdService(user, connection);
         }
@@ -81,7 +78,7 @@ namespace AdLoginDemo.Services
                 .ToArray();
         }
 
-        public AdUser[]? GetPupils(string schoolclass)
+        public AdUser[] GetPupils(string schoolclass)
         {
             try
             {
@@ -89,10 +86,10 @@ namespace AdLoginDemo.Services
                 var members = Search($"(&(objectClass=user)(objectClass=person)(memberOf={classGroup}))");
                 return members.Select(m => new AdUser(m)).ToArray();
             }
-            catch { return null; }
+            catch { return Array.Empty<AdUser>(); }
         }
 
-        public AdUser[]? GetTeachers(string schoolclass)
+        public AdUser[] GetTeachers(string schoolclass)
         {
             try
             {
@@ -100,7 +97,7 @@ namespace AdLoginDemo.Services
                 var members = Search($"(&(objectClass=user)(objectClass=person)(memberOf={classGroup}))");
                 return members.Select(m => new AdUser(m)).ToArray();
             }
-            catch { return null; }
+            catch { return Array.Empty<AdUser>(); }
         }
 
         public AdUser? GetKv(string schoolclass)

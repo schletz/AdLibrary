@@ -1,4 +1,4 @@
-# AD Abfrage und Versand von Mails aus der Schule
+# ASP.NET Core Applikation (Razor Pages) mit Login
 
 Folgende NuGet Pakete werden verwendet:
 
@@ -8,12 +8,25 @@ Folgende NuGet Pakete werden verwendet:
 
 ## Konfigurieren des Abfrageusers
 
-Es gibt auch eine Login Methode ohne Parameter. Diese verwendet einen eingetragenen *Suchuser*.
-Dies ist dann sinnvoll, wenn nach dem Login des Users noch Informationen abgerufen werden sollen.
+Im sich im Development Mode auch als anderer User anmelden zu können, muss ein Abfrageuser in
+[appsettings.json](AdLoginDemo/AdLoginDemo.Webapp/appsettings.json) hinterlegt werden (Properties
+*Searchuser* und *Searchpass*). Das kann auch der eigene User sein, allerdings darf die Konfiguration
+natürlich nie öffentlich geteilt werden.
 
-Die Verbindung ist immer so kurz wie möglich offen zu halten, deswegen verwendet das Beispiel
-*using var* beim Instanzieren des Services. In ASP.NET wird das Service als Transient Service
-registriert.
+## Starten der Webapp
+Über die Konsole (oder die IDE) kann das Projekt in *AdLoginDemo.Webapp* gestartet werden.
+
+```text
+cd AdLoginDemo.Webapp
+dotnet watch run
+```
+
+Die App ist dann im Browser unter https://localhost:5001 verfügbar.
+
+## Testen des Mailfeatures
+
+Im Testprojekt gibt es die Testklasse *SpgMailClientTests*. Dort ist ein Test angelegt, der das
+Senden von Mails über den Schulmailserver demonstriert.
 
 ## Ansehen der AD Daten
 

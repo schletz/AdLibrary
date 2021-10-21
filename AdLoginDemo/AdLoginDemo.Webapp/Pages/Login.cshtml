@@ -1,0 +1,52 @@
+﻿@page
+@model AdLoginDemo.Webapp.Pages.LoginModel
+@section head
+{
+    <style>
+        #loginform {
+            max-width: 40em;
+            margin-left: auto;
+            margin-right: auto;
+            padding: 1em;
+            border: 1px solid hsl(205 100% 50%);
+        }
+    </style>
+}
+<div id="loginform">
+    <h3>Login</h3>
+    <p>Melde dich mit deinem Schulaccount an.</p>
+    <form method="post">
+        <div class="d-block d-sm-table">
+            <div class="d-block d-sm-table-row">
+                <div class="d-block d-sm-table-cell pr-sm-3 pb-sm-3">Benutzername:</div>
+                <div class="d-block d-sm-table-cell w-100">
+                    <input class="form-control" asp-for="Username" />
+                    <span class="small text-danger" asp-validation-for="@Model.Username"></span>
+                </div>
+            </div>
+
+            <div class="d-block d-sm-table-row">
+                <div class="d-block d-sm-table-cell pr-sm-3 pb-sm-3">Passwort:</div>
+                <div class="d-block d-sm-table-cell w-100">
+                    <input class="form-control" asp-for="Password" />
+                    <span class="small text-danger" asp-validation-for="@Model.Password"></span>
+                </div>
+            </div>
+        </div>
+        @if (Model.IsDevelopment)
+        {
+            <div class="d-block">
+                <p class="text-info">Development Mode. Jedes Passwort ist gültig.</p>
+            </div>
+        }
+        @if (!string.IsNullOrEmpty(Model.Message))
+        {
+            <div class="d-block">
+                <p class="text-danger">@Model.Message</p>
+            </div>
+        }
+        <div class="d-block mt-2">
+            <button class="btn btn-primary">Login</button>
+        </div>
+    </form>
+</div>
