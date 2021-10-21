@@ -1,7 +1,8 @@
 # ASP.NET Core Applikation (Razor Pages) mit Login
 
-Folgende NuGet Pakete werden verwendet:
+Folgende SDK und NuGet Pakete werden verwendet:
 
+- .NET 5 SDK (in Visual Studio ab 2019 enthalten)
 - [Novell.Directory.Ldap.NETStandard](https://www.nuget.org/packages/Novell.Directory.Ldap.NETStandard/)
   zum Abfragen von Daten aus dem Active Directory
 - [MailKit](https://www.nuget.org/packages/MailKit/) zum Senden von Mails über den Mailserver der Schule.
